@@ -1,9 +1,14 @@
 package com.pepo.news.presentation.appviewpresenter.home.view.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,10 +41,14 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
     NewsFeedAdapter newsFeedAdapter;
     RecyclerView newsRecyclerView;
     private NewsFeedComponent newsFeedComponent;
+    private int pollingInterval = 600000;
+    private Handler mHandler;
+    private BroadcastReceiver receiver;
+    private Runnable mStatusChecker;
 
     @Override
     public Context context() {
-        return null;
+        return getApplicationContext();
     }
 
     private ActivityNewsFeedBinding activityNewsFeedBinding;
@@ -54,13 +63,25 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
         newsFeedComponent.inject(this);
         initializeViews();
         newsFeedPresenter.setView(this);
+        newsFeedPresenter.onRestoreInstanceState(savedInstanceState);
+        registerReceiver();
+        setNewsFeedRepeatingTask();
         newsFeedPresenter.initialize();
-
     }
 
+    private void registerReceiver(){
+        IntentFilter filter = new IntentFilter("com.pepo.news.NEWS_UPDATED");
+        receiver = new NewsUpdateReceiver();
+        registerReceiver(receiver, filter);
+    }
+
+    private void unRegisterReceiver(){
+        unregisterReceiver(receiver);
+    }
     private void initializeViews() {
+        newsFeedAdapter.setOnItemClickListener(onNewsTemplateClickListener);
         activityNewsFeedBinding.viewRetry.setOnClickListener(clickListners);
-        newsRecyclerView=activityNewsFeedBinding.newsFeedRecyclerView;
+        newsRecyclerView = activityNewsFeedBinding.newsFeedRecyclerView;
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(this
                 .getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         newsRecyclerView.setAdapter(newsFeedAdapter);
@@ -72,6 +93,13 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
                 .activityModule(getActivityModule())
                 .build();
 
+    }
+
+    /*to handle the rotation, otherwise we have to fetch the data once again from the network*/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        newsFeedPresenter.onSaveInstanceState(outState);
     }
 
     @Override
@@ -108,12 +136,15 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
 
     @Override
     public void displayNewsTemplate(List<NewsFeedModel> newsFeedModels) {
-            newsFeedAdapter.setNewsFeeds(newsFeedModels);
+        newsFeedAdapter.setNewsFeeds(newsFeedModels);
+        startNewsFeedRepeatingTask();
     }
 
     @Override
     public void showFullNews(NewsFeedModel newsFeedModel) {
-
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(newsFeedModel.getLink()));
+        startActivity(i);
     }
 
     @Override
@@ -142,7 +173,7 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
                 case R.id.view_retry:
                     newsFeedPresenter.tryAgain();
 
-                break;
+                    break;
 
 
             }
@@ -185,6 +216,7 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
     public void onDestroy() {
         super.onDestroy();
         newsFeedPresenter.destroy();
+        unRegisterReceiver();
         newsRecyclerView.setAdapter(null);
     }
 
@@ -199,7 +231,25 @@ public class NewsFeedActivity extends BaseActivity implements NewsFeedView,
         activityNewsFeedBinding.mainView.setVisibility(View.INVISIBLE);
     }
 
+    public class NewsUpdateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            newsFeedPresenter.updatedDataReceived(intent);
+        }
+    }
 
+   private void  setNewsFeedRepeatingTask(){
+       mHandler = new Handler();
 
+    }
 
+    void startNewsFeedRepeatingTask() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                newsFeedPresenter.getNewsFeed();
+                mHandler.postDelayed(this, pollingInterval);
+            }
+        },pollingInterval);
+    }
 }

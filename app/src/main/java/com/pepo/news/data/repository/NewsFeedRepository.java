@@ -32,11 +32,12 @@ public class NewsFeedRepository implements INewsFeedRepository {
 
     @Override
     public Observable<List<NewsFeed>> getNewsFeed() {
+
         return restApi.getNewsFeeds().map(new Func1<List<NewsFeedEntity>,
                 List<NewsFeed>>() {
             @Override
             public List<NewsFeed> call(List<NewsFeedEntity> newsFeedEntity) {
-                return dataMapper.transformFromNewsFeedEntity(newsFeedEntity);
+                return dataMapper.transFromNewsFeedEntity(newsFeedEntity);
             }
         });
     }

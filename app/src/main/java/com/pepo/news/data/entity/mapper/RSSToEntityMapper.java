@@ -41,22 +41,30 @@ public class RSSToEntityMapper {
         parser.require(XmlPullParser.START_TAG, null, "rss");
         String title = null;
         String link = null;
+        String imageLink = null;
         List<NewsFeedEntity> items = new ArrayList<NewsFeedEntity>();
-        while (parser.next() != XmlPullParser.END_DOCUMENT) {
+        int itemID=0;
+        while (parser.next() != XmlPullParser.END_DOCUMENT && items.size()<16 ) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
+
             String name = parser.getName();
             if (name.equals("title")) {
                 title = readTitle(parser);
             } else if (name.equals("link")) {
                 link = readLink(parser);
             }
-            if (title != null && link != null) {
-                NewsFeedEntity item = new NewsFeedEntity(title, link,null);
+            else if (name.equals("description")) {
+                imageLink = readDescription(parser);
+            }
+            if (title != null && link != null && imageLink!=null ) {
+                NewsFeedEntity item = new NewsFeedEntity(itemID,title, link, imageLink);
                 items.add(item);
                 title = null;
                 link = null;
+                imageLink=null;
+                itemID++;
             }
         }
         return items;
@@ -76,6 +84,20 @@ public class RSSToEntityMapper {
         return title;
     }
 
+    private String readDescription(XmlPullParser parser) throws XmlPullParserException, IOException {
+        parser.require(XmlPullParser.START_TAG, ns, "description");
+        String description = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "description");
+        String[] strings = description.split("'");
+                if(strings.length==0 || strings.length==1){
+                    return null;
+                }
+                else {
+                    return  strings[1];
+                }
+
+    }
+
     // For the tags title and link, extract their text values.
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
         String result = "";
@@ -85,4 +107,6 @@ public class RSSToEntityMapper {
         }
         return result;
     }
+
+
 }

@@ -1,5 +1,7 @@
 package com.pepo.news.data.entity.mapper;
 
+import android.util.Log;
+
 import com.pepo.news.data.entity.NewsFeedEntity;
 import com.pepo.news.domain.model.NewsFeed;
 
@@ -16,14 +18,14 @@ public class EntityToDataMapper {
     }
 
 
-    public List<NewsFeed> transformFromNewsFeedEntity(List<NewsFeedEntity> flightsEntity) {
+    public List<NewsFeed> transFromNewsFeedEntity(List<NewsFeedEntity> flightsEntity) {
         List<NewsFeed> newsFeeds = new ArrayList<NewsFeed>();
 
         for (NewsFeedEntity entity : flightsEntity){
             NewsFeed newsFeed = new NewsFeed();
             newsFeed.setTitle(entity.getTitle());
             newsFeed.setLink(entity.getLink());
-            newsFeed.setDescription(entity.getDescription());
+            newsFeed.setImageLink(entity.getImageLink());
             newsFeeds.add(newsFeed);
         }
         return newsFeeds;

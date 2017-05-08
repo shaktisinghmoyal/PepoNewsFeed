@@ -1,10 +1,14 @@
 
 package com.pepo.news.data.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class NewsFeedEntity {
+public class NewsFeedEntity  {
 
     @SerializedName("ID")
     @Expose
@@ -18,9 +22,9 @@ public class NewsFeedEntity {
     @Expose
     private String link;
 
-    @SerializedName("DESCRIPTION")
+    @SerializedName("IMAGE_LINK")
     @Expose
-    private String description;
+    private String imageLink;
 
 
     /**
@@ -32,15 +36,18 @@ public class NewsFeedEntity {
     /**
      * @param title
      * @param link
-     * @param description
+     * @param imageLink
      */
-    public NewsFeedEntity(int id, String title, String link, String description) {
+    public NewsFeedEntity(int id, String title, String link, String imageLink) {
         super();
         this.id = id;
         this.title = title;
         this.link = link;
-        this.description = description;
+        this.imageLink = imageLink;
     }
+
+
+
 
     public int getId() {
         return id;
@@ -66,12 +73,12 @@ public class NewsFeedEntity {
         this.link = link;
     }
 
-    public String getDescription() {
-        return description;
+    public String getImageLink() {
+        return imageLink;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
 
@@ -83,7 +90,7 @@ public class NewsFeedEntity {
         sb.append("  id: ").append(id).append("\n");
         sb.append("  title: ").append(title).append("\n");
         sb.append("  link: ").append(link).append("\n");
-        sb.append("  description: ").append(description).append("\n");
+        sb.append("  imageLink: ").append(imageLink).append("\n");
         sb.append("}\n");
         return sb.toString();
     }
@@ -98,7 +105,7 @@ public class NewsFeedEntity {
         if (getId() != entity.getId()) return false;
         if (!getTitle().equals(entity.getTitle())) return false;
         if (!getLink().equals(entity.getLink())) return false;
-        return getDescription().equals(entity.getDescription());
+        return getImageLink().equals(entity.getImageLink());
 
     }
 
@@ -107,7 +114,10 @@ public class NewsFeedEntity {
         int result = getId();
         result = 31 * result + getTitle().hashCode();
         result = 31 * result + getLink().hashCode();
-        result = 31 * result + getDescription().hashCode();
+        result = 31 * result + getImageLink().hashCode();
         return result;
     }
+
+
+
 }

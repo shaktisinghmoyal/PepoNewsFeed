@@ -1,15 +1,23 @@
-package com.pepo.news.data.repository.datastorage;
+package com.pepo.news.data.networking.datastorage;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Parcelable;
+import android.util.Log;
 
 import com.pepo.news.data.entity.NewsFeedEntity;
+import com.pepo.news.data.entity.mapper.EntityToDataMapper;
+import com.pepo.news.data.entity.mapper.RSSToEntityMapper;
+import com.pepo.news.domain.model.NewsFeed;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by shakti on 5/7/2017.
@@ -31,9 +39,14 @@ public class NewsFeedStorage extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_LINK = "link";
+    private Context context;
+    private EntityToDataMapper entityToDataMapper;
 
-    public NewsFeedStorage(Context context) {
+    @Inject
+    public NewsFeedStorage(Context context, EntityToDataMapper entityToDataMapper) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
+        this.entityToDataMapper = entityToDataMapper;
     }
 
     // Creating Tables
@@ -59,9 +72,9 @@ public class NewsFeedStorage extends SQLiteOpenHelper {
      * All CRUD(Create, Read, Update, Delete) Operations
      */
 
-    void addAllNewsFeed(List<NewsFeedEntity> newsFeedEntityList){
+    public void addAllNewsFeed(List<NewsFeedEntity> newsFeedEntityList, Boolean shouldBroadCast) {
         SQLiteDatabase db = this.getWritableDatabase();
-        for(NewsFeedEntity newsFeedEntity : newsFeedEntityList){
+        for (NewsFeedEntity newsFeedEntity : newsFeedEntityList) {
             ContentValues values = new ContentValues();
             values.put(KEY_TITLE, newsFeedEntity.getTitle());
             values.put(KEY_LINK, newsFeedEntity.getLink());
@@ -69,6 +82,16 @@ public class NewsFeedStorage extends SQLiteOpenHelper {
             db.insert(TABLE_NEWS_FEED, null, values);
         }
         db.close(); // Closing database connection
+
+        if (shouldBroadCast) {
+            Intent intent = new Intent();
+            ArrayList<NewsFeed> newsFeeds = (ArrayList) entityToDataMapper
+                    .transFromNewsFeedEntity(
+                            newsFeedEntityList);
+            intent.putParcelableArrayListExtra("news_feeds", newsFeeds);
+            intent.setAction("com.pepo.news.NEWS_UPDATED");
+            context.sendBroadcast(intent);
+        }
     }
 
     // Getting single contact
@@ -82,7 +105,7 @@ public class NewsFeedStorage extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
         NewsFeedEntity contact = new NewsFeedEntity(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2),null);
+                cursor.getString(1), cursor.getString(2), null);
         // return contact
         return contact;
     }

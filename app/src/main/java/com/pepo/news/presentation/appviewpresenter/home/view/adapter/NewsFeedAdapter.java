@@ -17,14 +17,14 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
-    private List<NewsFeedModel> flightModelList;
+    private List<NewsFeedModel> newsFeedModelList;
     private OnItemClickListener onNewsFeedClickListener;
     private AppCompatActivity appCompatActivity;
 
 
     @Inject
     public NewsFeedAdapter(AppCompatActivity activity) {
-        this.flightModelList = new ArrayList<NewsFeedModel>();
+        this.newsFeedModelList = new ArrayList<NewsFeedModel>();
         appCompatActivity = activity;
     }
 
@@ -36,12 +36,14 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
 
     @Override
     public void onBindViewHolder(NewsFeedViewHolder newsFeedViewHolder, final int position) {
-        newsFeedViewHolder.bindTo(flightModelList.get(position));
+        NewsFeedModel newsFeedModel = newsFeedModelList.get(position);
+        newsFeedViewHolder.bindTo(newsFeedModel);
+        newsFeedViewHolder.setNewsFeedImage(newsFeedModel.getImageLink());
         newsFeedViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onNewsFeedClickListener != null) {
-                    onNewsFeedClickListener.onNewsFeedClicked(flightModelList.get(position));
+                    onNewsFeedClickListener.onNewsFeedClicked(newsFeedModelList.get(position));
                 }
             }
         });
@@ -49,8 +51,9 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
     }
 
     public void setNewsFeeds(Collection<NewsFeedModel> newsFeedModelCollection) {
+        newsFeedModelList.clear();
         validateUsersCollection(newsFeedModelCollection);
-        flightModelList.addAll(newsFeedModelCollection);
+        newsFeedModelList.addAll(newsFeedModelCollection);
         notifyDataSetChanged();
     }
 
@@ -66,7 +69,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
 
     @Override
     public int getItemCount() {
-        return (null != flightModelList ? flightModelList.size() : 0);
+        return (null != newsFeedModelList ? newsFeedModelList.size() : 0);
     }
 
 

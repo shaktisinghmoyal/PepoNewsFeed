@@ -2,6 +2,8 @@
 package com.pepo.news.presentation.appviewpresenter.mapper;
 
 
+import android.util.Log;
+
 import com.pepo.news.data.entity.NewsFeedEntity;
 import com.pepo.news.domain.model.NewsFeed;
 import com.pepo.news.presentation.appviewpresenter.home.model.NewsFeedModel;
@@ -35,7 +37,7 @@ public class DataMapper {
             NewsFeedModel newsFeedModel = new NewsFeedModel();
             newsFeedModel.setTitle(newsFeed.getTitle());
             newsFeedModel.setLink(newsFeed.getLink());
-            newsFeedModel.setDescription(newsFeed.getDescription());
+            newsFeedModel.setImageLink(newsFeed.getImageLink());
             newsFeedModels.add(newsFeedModel);
         }
 

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.pepo.news.data.entity.NewsFeedEntity;
 import com.pepo.news.data.entity.mapper.RSSToEntityMapper;
 import com.pepo.news.data.exception.NetworkConnectionException;
+import com.pepo.news.data.networking.datastorage.NewsFeedStorage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,9 @@ public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, Bas
     private final String Tag = "RestApi";
     private final Context context;
     private RSSToEntityMapper RSSToEntityMapper;
+
+    @Inject
+    NewsFeedStorage newsFeedStorage;
 
 
     @Inject
@@ -45,13 +49,13 @@ public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, Bas
                 if (isThereInternetConnection()) {
                     try {
                         InputStream inputStream = getNewsStream();
-
-                        if(inputStream!=null){
-                            subscriber.onNext(RSSToEntityMapper.parse(
-                                    inputStream));
-                            subscriber.onCompleted();
-                        }
-                        else {
+                        if (inputStream != null) {
+                            List<NewsFeedEntity> newsFeedEntityList=  RSSToEntityMapper.parse(
+                                    inputStream);
+                            newsFeedStorage.addAllNewsFeed(newsFeedEntityList,true);
+//                            subscriber.onNext(newsFeedEntityList);
+//                            subscriber.onCompleted();
+                        } else {
                             subscriber.onError(new NetworkConnectionException());
                         }
 
@@ -60,12 +64,20 @@ public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, Bas
                         subscriber.onError(new NetworkConnectionException(e.getMessage()));
                     }
                 } else {
-                    subscriber.onError(new NetworkConnectionException());
+                    List<NewsFeedEntity> newsFeedEntityList = newsFeedStorage.getAllNewsFeeds();
+                    if (newsFeedEntityList.size() != 0) {
+                        subscriber.onNext(newsFeedEntityList);
+                        subscriber.onCompleted();
+                    } else {
+                        subscriber.onError(new NetworkConnectionException());
+                    }
+
                 }
             }
         });
 
     }
+
     private InputStream getNewsStream() throws MalformedURLException {
         try {
             URL url = new URL(NEWS_FEED_URL);

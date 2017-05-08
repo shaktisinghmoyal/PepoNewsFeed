@@ -1,5 +1,10 @@
 package com.pepo.news.presentation.appviewpresenter.home.presenter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,6 +20,7 @@ import com.pepo.news.presentation.appviewpresenter.mapper.DataMapper;
 import com.pepo.news.presentation.di.PerActivity;
 import com.pepo.news.presentation.exception.ErrorMessageFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,7 +31,7 @@ import javax.inject.Named;
  */
 
 @PerActivity
-public class NewsFeedPresenter implements INewsFeedPresenter,Presenter{
+public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
 
     private final String Tag = "NewsFeedPresenter";
     private final BaseUseCase getNewsFeed;
@@ -49,8 +55,17 @@ public class NewsFeedPresenter implements INewsFeedPresenter,Presenter{
      * Initializes the presenter by start retrieving the FlightsEntity list.
      */
     public void initialize() {
+
         setActionBar();
-        fetchData();
+        if(newsFeedModels!=null){
+            hideViewLoading();
+            showMainLayout();
+            showNewsTemplates(newsFeedModels);
+        }
+        else {
+            fetchData();
+        }
+
     }
 
 
@@ -58,10 +73,23 @@ public class NewsFeedPresenter implements INewsFeedPresenter,Presenter{
         fetchData();
     }
 
-    public void  fetchData(){
+    public void fetchData() {
         hideViewRetry();
         showViewLoading();
         getNewsFeed();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("NEWS_FEEDS", (ArrayList) newsFeedModels);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            newsFeedModels = savedInstanceState.getParcelableArrayList("NEWS_FEEDS");
+        }
+
     }
 
     private void setActionBar() {
@@ -155,8 +183,16 @@ public class NewsFeedPresenter implements INewsFeedPresenter,Presenter{
 
     @Override
     public void onNewsTemplateClicked(NewsFeedModel newsFeedModel) {
-
+        newsFeedView.showFullNews(newsFeedModel);
     }
 
+    @Override
+    public void updatedDataReceived(Intent intent) {
+        ArrayList<NewsFeed> newsFeedList = intent.getParcelableArrayListExtra("news_feeds");
+        newsFeedModels = dataMapper.transform(newsFeedList);
+        showNewsTemplates(newsFeedModels);
+        hideViewLoading();
+        showMainLayout();
+    }
 
 }
