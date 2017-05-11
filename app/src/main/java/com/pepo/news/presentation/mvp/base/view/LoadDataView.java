@@ -1,5 +1,5 @@
 
-package com.pepo.news.presentation.appviewpresenter.base.view;
+package com.pepo.news.presentation.mvp.base.view;
 
 import android.content.Context;
 

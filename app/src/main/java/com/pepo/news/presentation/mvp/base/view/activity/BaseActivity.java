@@ -1,4 +1,4 @@
-package com.pepo.news.presentation.appviewpresenter.base.view.activity;
+package com.pepo.news.presentation.mvp.base.view.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,18 +20,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         getApplicationComponent().inject(this);
         navigator = new Navigator();
     }
-
-//     protected  void setActionBar(){};
-//    protected void addFragment(int containerViewId, Fragment fragment, String tag) {
-//
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        if (tag == "search_fragment") {
-//            fragmentTransaction.replace(containerViewId, fragment, tag).addToBackStack(tag);
-//        } else {
-//            fragmentTransaction.replace(containerViewId, fragment, tag);
-//        }
-//        fragmentTransaction.commitAllowingStateLoss();
-//    }
 
     /**
      * Get the Main Application component for dependency injection.

@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".presentation.appviewpresenter.home.view.activity.NewsFeedActivity">
+
+        <activity android:name=".presentation.mvp.home.view.activity.NewsFeedActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

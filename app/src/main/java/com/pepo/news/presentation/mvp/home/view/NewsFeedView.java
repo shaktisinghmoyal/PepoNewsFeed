@@ -1,9 +1,9 @@
-package com.pepo.news.presentation.appviewpresenter.home.view;
+package com.pepo.news.presentation.mvp.home.view;
 
 
 import android.content.Context;
 
-import com.pepo.news.presentation.appviewpresenter.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
 
 import java.util.List;
 
@@ -26,10 +26,13 @@ public interface NewsFeedView {
 
     void displayNewsTemplate(List<NewsFeedModel> newsFeedModels);
 
-    void showFullNews(NewsFeedModel newsFeedModel);
+    void showFullNews(int position,NewsFeedModel newsFeedModel);
+
+    void blurTheReadNews(int position);
 
     void setActionBar();
 
      Context context();
 
+    void hideErrorMessageIfShown();
 }

@@ -7,10 +7,12 @@ import com.pepo.news.presentation.di.components.ApplicationComponent;
 import com.pepo.news.presentation.di.components.DaggerApplicationComponent;
 import com.pepo.news.presentation.di.modules.ApplicationModule;
 
+/**
+ * Android Main Application
+ */
 public class NewsFeedApplication extends Application {
 
     private static ApplicationComponent applicationComponent;
-    private final String Tag = "NewsFeedApplication";
 
     public static Context getAppContext() {
         return applicationComponent.context();
@@ -21,6 +23,7 @@ public class NewsFeedApplication extends Application {
         super.onCreate();
         initializeInjector();
     }
+
     private void initializeInjector() {
         applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))

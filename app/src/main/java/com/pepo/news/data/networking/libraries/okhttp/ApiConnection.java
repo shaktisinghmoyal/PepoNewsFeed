@@ -11,6 +11,10 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This a simple class which is used for REST api calls, although in this application there is no
+ * need of this class, becasue we are not hitting any server with REST calls.
+ * */
 public class ApiConnection  implements Callable<String> {
 
     private static final String CONTENT_TYPE_LABEL = "Content-Type";

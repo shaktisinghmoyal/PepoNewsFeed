@@ -6,7 +6,6 @@ package com.pepo.news.domain.exception;
  */
 public class DefaultErrorBundle implements ErrorBundle {
     private static final String DEFAULT_ERROR_MSG = "Unknown error";
-    private final String Tag = "DefaultErrorBundle";
     private final Exception exception;
 
     public DefaultErrorBundle(Exception exception) {

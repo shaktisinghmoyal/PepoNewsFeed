@@ -1,24 +1,21 @@
-package com.pepo.news.presentation.appviewpresenter.home.presenter;
+package com.pepo.news.presentation.mvp.home.presenter;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
+import com.pepo.news.R;
 import com.pepo.news.domain.exception.DefaultErrorBundle;
 import com.pepo.news.domain.exception.ErrorBundle;
 import com.pepo.news.domain.interactor.BaseUseCase;
 import com.pepo.news.domain.interactor.DefaultSubscriber;
 import com.pepo.news.domain.model.NewsFeed;
-import com.pepo.news.presentation.appviewpresenter.base.presenter.Presenter;
-import com.pepo.news.presentation.appviewpresenter.home.model.NewsFeedModel;
-import com.pepo.news.presentation.appviewpresenter.home.view.NewsFeedView;
-import com.pepo.news.presentation.appviewpresenter.mapper.DataMapper;
-import com.pepo.news.presentation.di.PerActivity;
 import com.pepo.news.presentation.exception.ErrorMessageFactory;
+import com.pepo.news.presentation.mvp.base.presenter.Presenter;
+import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.view.NewsFeedView;
+import com.pepo.news.presentation.mapper.DataMapper;
+import com.pepo.news.presentation.di.PerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +30,21 @@ import javax.inject.Named;
 @PerActivity
 public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
 
-    private final String Tag = "NewsFeedPresenter";
     private final BaseUseCase getNewsFeed;
+    private final BaseUseCase getNewsFeedFromDB;
+    private final BaseUseCase updateReadInfoInDB;
     private final DataMapper dataMapper;
     private NewsFeedView newsFeedView;
     private List<NewsFeedModel> newsFeedModels;
+    private final String NEWS_FEEDS = "NEWS_FEEDS";
 
     @Inject
-    public NewsFeedPresenter(@Named("getNewsFeed") BaseUseCase getNewsFeed, DataMapper dataMapper) {
+    public NewsFeedPresenter(@Named("getNewsFeed") BaseUseCase getNewsFeed, @Named("updateReadInfoInDB")
+            BaseUseCase updateReadInfoInDB, @Named("getNewsFeedFromDB")
+                                     BaseUseCase getNewsFeedFromDB, DataMapper dataMapper) {
         this.getNewsFeed = getNewsFeed;
+        this.getNewsFeedFromDB = getNewsFeedFromDB;
+        this.updateReadInfoInDB = updateReadInfoInDB;
         this.dataMapper = dataMapper;
 
     }
@@ -57,13 +60,13 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
     public void initialize() {
 
         setActionBar();
-        if(newsFeedModels!=null){
+        if (newsFeedModels != null) {
             hideViewLoading();
             showMainLayout();
             showNewsTemplates(newsFeedModels);
-        }
-        else {
-            fetchData();
+        } else {
+            hideViewRetry();
+            showViewLoading();
         }
 
     }
@@ -81,13 +84,13 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("NEWS_FEEDS", (ArrayList) newsFeedModels);
+        outState.putParcelableArrayList(NEWS_FEEDS, (ArrayList) newsFeedModels);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            newsFeedModels = savedInstanceState.getParcelableArrayList("NEWS_FEEDS");
+            newsFeedModels = savedInstanceState.getParcelableArrayList(NEWS_FEEDS);
         }
 
     }
@@ -118,7 +121,7 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
         newsFeedView.showMainLayout();
     }
 
-    private void highMainLayout() {
+    private void hideMainLayout() {
         newsFeedView.hideMainLayout();
     }
 
@@ -131,6 +134,15 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
 
     private void showNewsTemplates(List<NewsFeedModel> newsFeedModels) {
         newsFeedView.displayNewsTemplate(newsFeedModels);
+    }
+
+    private void hideErrorMessageIfShown() {
+        newsFeedView.hideErrorMessageIfShown();
+    }
+
+    @Override
+    public void setTheCurrentShownNewsRead(int position) {
+        setTheCurrentNewsReadInDB(position);
     }
 
 
@@ -147,7 +159,29 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
     @Override
     public void destroy() {
         getNewsFeed.unsubscribe();
+        getNewsFeedFromDB.unsubscribe();
+        updateReadInfoInDB.unsubscribe();
         this.newsFeedView = null;
+    }
+
+    private final class NewsFeedReadDBUpdateSubscriber extends DefaultSubscriber<Integer> {
+
+
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            showErrorMessage(new DefaultErrorBundle((Exception) e));
+
+        }
+
+        @Override
+        public void onNext(Integer position) {
+            newsFeedView.blurTheReadNews(position);
+        }
     }
 
 
@@ -171,10 +205,19 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
             newsFeedModels = dataMapper.transform(newsFeeds);
             showNewsTemplates(newsFeedModels);
             hideViewLoading();
+            hideViewRetry();
             showMainLayout();
         }
     }
 
+    private void setTheCurrentNewsReadInDB(int position) {
+        updateReadInfoInDB.execute(position, new NewsFeedReadDBUpdateSubscriber());
+    }
+
+    @Override
+    public void getNewsFeedFromDB() {
+        getNewsFeedFromDB.execute(new NewsFeedSubscriber());
+    }
 
     @Override
     public void getNewsFeed() {
@@ -182,17 +225,20 @@ public class NewsFeedPresenter implements INewsFeedPresenter, Presenter {
     }
 
     @Override
-    public void onNewsTemplateClicked(NewsFeedModel newsFeedModel) {
-        newsFeedView.showFullNews(newsFeedModel);
+    public void onNewsTemplateClicked(int position, NewsFeedModel newsFeedModel) {
+        newsFeedView.showFullNews(position, newsFeedModel);
     }
 
     @Override
     public void updatedDataReceived(Intent intent) {
-        ArrayList<NewsFeed> newsFeedList = intent.getParcelableArrayListExtra("news_feeds");
+        ArrayList<NewsFeed> newsFeedList = intent.getParcelableArrayListExtra
+                (newsFeedView.context().getString(R.string.news_feeds));
         newsFeedModels = dataMapper.transform(newsFeedList);
-        showNewsTemplates(newsFeedModels);
         hideViewLoading();
         showMainLayout();
+        hideErrorMessageIfShown();
+        showNewsTemplates(newsFeedModels);
+
     }
 
 }

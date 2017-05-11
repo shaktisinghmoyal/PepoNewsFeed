@@ -7,8 +7,7 @@ import android.net.NetworkInfo;
 import javax.inject.Inject;
 
 
-public class BaseMethodsForApiRestCalls {
-    private final String Tag = "BaseMethodsForApiRestCalls";
+public class BaseMethodsForApiCalls {
 
     @Inject
     Context context;

@@ -1,4 +1,4 @@
-package com.pepo.news.presentation.appviewpresenter.home.view.adapter;
+package com.pepo.news.presentation.mvp.home.view.adapter;
 
 
 import android.support.v7.app.AppCompatActivity;
@@ -7,14 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pepo.news.presentation.appviewpresenter.home.model.NewsFeedModel;
-import com.pepo.news.presentation.utils.NewsFeedViewHolder;
+import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.view.viwholders.NewsFeedViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+
+
+// adapter for the recycler view used to display news template
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
     private List<NewsFeedModel> newsFeedModelList;
@@ -43,7 +46,8 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
             @Override
             public void onClick(View v) {
                 if (onNewsFeedClickListener != null) {
-                    onNewsFeedClickListener.onNewsFeedClicked(newsFeedModelList.get(position));
+                    onNewsFeedClickListener.onNewsFeedClicked(position,newsFeedModelList.get
+                            (position));
                 }
             }
         });
@@ -54,6 +58,11 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
         newsFeedModelList.clear();
         validateUsersCollection(newsFeedModelCollection);
         newsFeedModelList.addAll(newsFeedModelCollection);
+        notifyDataSetChanged();
+    }
+
+    public void blurTheReadNews(int position){
+        newsFeedModelList.get(position).setIsRead(true);
         notifyDataSetChanged();
     }
 
@@ -74,7 +83,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder>  {
 
 
     public interface OnItemClickListener {
-        void onNewsFeedClicked(NewsFeedModel newsFeedModel);
+        void onNewsFeedClicked(int position,NewsFeedModel newsFeedModel);
     }
 
 

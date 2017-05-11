@@ -2,7 +2,6 @@ package com.pepo.news.data.networking;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.pepo.news.data.entity.NewsFeedEntity;
 import com.pepo.news.data.entity.mapper.RSSToEntityMapper;
@@ -21,9 +20,13 @@ import javax.inject.Singleton;
 import rx.Observable;
 import rx.Subscriber;
 
+/**
+ * This class is used to write all the REST api calls.
+ * however are not hitting server with REST api but directly getting data with url.
+ * Still the purpose of this class is to write all the calls which will interact the server
+ * */
 @Singleton
-public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, BaseURL {
-    private final String Tag = "RestApi";
+public class EndPointsCalls extends BaseMethodsForApiCalls implements IEndPoints, BaseURL {
     private final Context context;
     private RSSToEntityMapper RSSToEntityMapper;
 
@@ -32,7 +35,7 @@ public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, Bas
 
 
     @Inject
-    public RestApi(Context context, RSSToEntityMapper RSSToEntityMapper) {
+    public EndPointsCalls(Context context, RSSToEntityMapper RSSToEntityMapper) {
         if (context == null || RSSToEntityMapper == null) {
             throw new IllegalArgumentException("The constructor parameters cannot be null!!!");
         }
@@ -53,8 +56,6 @@ public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, Bas
                             List<NewsFeedEntity> newsFeedEntityList=  RSSToEntityMapper.parse(
                                     inputStream);
                             newsFeedStorage.addAllNewsFeed(newsFeedEntityList,true);
-//                            subscriber.onNext(newsFeedEntityList);
-//                            subscriber.onCompleted();
                         } else {
                             subscriber.onError(new NetworkConnectionException());
                         }
@@ -64,14 +65,7 @@ public class RestApi extends BaseMethodsForApiRestCalls implements IRestApi, Bas
                         subscriber.onError(new NetworkConnectionException(e.getMessage()));
                     }
                 } else {
-                    List<NewsFeedEntity> newsFeedEntityList = newsFeedStorage.getAllNewsFeeds();
-                    if (newsFeedEntityList.size() != 0) {
-                        subscriber.onNext(newsFeedEntityList);
-                        subscriber.onCompleted();
-                    } else {
-                        subscriber.onError(new NetworkConnectionException());
-                    }
-
+                    subscriber.onError(new NetworkConnectionException());
                 }
             }
         });

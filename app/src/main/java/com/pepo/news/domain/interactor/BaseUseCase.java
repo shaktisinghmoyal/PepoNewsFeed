@@ -23,6 +23,7 @@ public abstract class BaseUseCase {
     final PostExecutionThread postExecutionThread;
     Subscription subscription = Subscriptions.empty();
     private Subscriber useCaseSubscriber;
+     int position;
 
     protected BaseUseCase(ThreadExecutor threadExecutor,
                           PostExecutionThread postExecutionThread) {
@@ -49,6 +50,12 @@ public abstract class BaseUseCase {
     }
 
 
+    @SuppressWarnings("unchecked")
+    public void execute(int position,Subscriber UseCaseSubscriber) {
+        this.position=position;
+        useCaseSubscriber = UseCaseSubscriber;
+        execute();
+    }
 
     @SuppressWarnings("unchecked")
     public void execute() {

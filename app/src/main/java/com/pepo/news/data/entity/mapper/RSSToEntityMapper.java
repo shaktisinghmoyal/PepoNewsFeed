@@ -1,6 +1,5 @@
 package com.pepo.news.data.entity.mapper;
 
-import android.util.Log;
 import android.util.Xml;
 
 import com.pepo.news.data.entity.NewsFeedEntity;
@@ -15,6 +14,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+
+/**
+ * it extract the data from xml files received from server
+ */
 public class RSSToEntityMapper {
 
 
@@ -22,6 +25,7 @@ public class RSSToEntityMapper {
     public RSSToEntityMapper() {
 
     }
+
     // We don't use namespaces
     private final String ns = null;
 
@@ -43,8 +47,8 @@ public class RSSToEntityMapper {
         String link = null;
         String imageLink = null;
         List<NewsFeedEntity> items = new ArrayList<NewsFeedEntity>();
-        int itemID=0;
-        while (parser.next() != XmlPullParser.END_DOCUMENT && items.size()<16 ) {
+        int itemID = 0;
+        while (parser.next() != XmlPullParser.END_DOCUMENT && items.size() < 16) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
@@ -54,16 +58,15 @@ public class RSSToEntityMapper {
                 title = readTitle(parser);
             } else if (name.equals("link")) {
                 link = readLink(parser);
-            }
-            else if (name.equals("description")) {
+            } else if (name.equals("description")) {
                 imageLink = readDescription(parser);
             }
-            if (title != null && link != null && imageLink!=null ) {
-                NewsFeedEntity item = new NewsFeedEntity(itemID,title, link, imageLink);
+            if (title != null && link != null && imageLink != null) {
+                NewsFeedEntity item = new NewsFeedEntity(itemID, title, link, imageLink, false);
                 items.add(item);
                 title = null;
                 link = null;
-                imageLink=null;
+                imageLink = null;
                 itemID++;
             }
         }
@@ -89,12 +92,11 @@ public class RSSToEntityMapper {
         String description = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "description");
         String[] strings = description.split("'");
-                if(strings.length==0 || strings.length==1){
-                    return null;
-                }
-                else {
-                    return  strings[1];
-                }
+        if (strings.length == 0 || strings.length == 1) {
+            return null;
+        } else {
+            return strings[1];
+        }
 
     }
 

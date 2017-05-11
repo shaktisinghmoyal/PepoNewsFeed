@@ -1,5 +1,5 @@
 
-package com.pepo.news.presentation.appviewpresenter.base.presenter;
+package com.pepo.news.presentation.mvp.base.presenter;
 
 /**
  * Interface representing a Presenter in a model view presenter (MVP) pattern.

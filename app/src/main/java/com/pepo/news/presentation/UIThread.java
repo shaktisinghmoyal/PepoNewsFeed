@@ -16,7 +16,6 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 @Singleton
 public class UIThread implements PostExecutionThread {
-    private final String Tag = "UIThread";
     @Inject
     public UIThread() {
     }

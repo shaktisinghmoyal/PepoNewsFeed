@@ -1,14 +1,19 @@
 
 package com.pepo.news.data.entity;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class NewsFeedEntity  {
+/**
+ * this is a simple POJO class represents the data model we retrieved from server
+ * similar POJO class has also been defined in domain and presentation layer as well.
+ * Although in this application there is no difference among NewsFeedEntity from data layer,
+ * NewsFeed from
+ * domain layer NewsFeedModel from presentation layer. But in ideal case we usually have these
+ * three class with slight difference in their stucture as per their uses in their respective layer
+ */
+
+public class NewsFeedEntity {
 
     @SerializedName("ID")
     @Expose
@@ -26,6 +31,10 @@ public class NewsFeedEntity  {
     @Expose
     private String imageLink;
 
+    @SerializedName("READ")
+    @Expose
+    private Boolean isRead;
+
 
     /**
      * No args constructor for use in serialization
@@ -37,16 +46,16 @@ public class NewsFeedEntity  {
      * @param title
      * @param link
      * @param imageLink
+     * @param isRead
      */
-    public NewsFeedEntity(int id, String title, String link, String imageLink) {
+    public NewsFeedEntity(int id, String title, String link, String imageLink, boolean isRead) {
         super();
         this.id = id;
         this.title = title;
         this.link = link;
         this.imageLink = imageLink;
+        this.isRead = isRead;
     }
-
-
 
 
     public int getId() {
@@ -81,6 +90,13 @@ public class NewsFeedEntity  {
         this.imageLink = imageLink;
     }
 
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(Boolean read) {
+        this.isRead = read;
+    }
 
     @Override
     public String toString() {
@@ -91,6 +107,8 @@ public class NewsFeedEntity  {
         sb.append("  title: ").append(title).append("\n");
         sb.append("  link: ").append(link).append("\n");
         sb.append("  imageLink: ").append(imageLink).append("\n");
+        sb.append("  isRead: ").append(isRead).append("\n");
+
         sb.append("}\n");
         return sb.toString();
     }
@@ -105,6 +123,7 @@ public class NewsFeedEntity  {
         if (getId() != entity.getId()) return false;
         if (!getTitle().equals(entity.getTitle())) return false;
         if (!getLink().equals(entity.getLink())) return false;
+        if (!getIsRead().equals(entity.getIsRead())) return false;
         return getImageLink().equals(entity.getImageLink());
 
     }
@@ -115,9 +134,9 @@ public class NewsFeedEntity  {
         result = 31 * result + getTitle().hashCode();
         result = 31 * result + getLink().hashCode();
         result = 31 * result + getImageLink().hashCode();
+        result = 31 * result + getIsRead().hashCode();
         return result;
     }
-
 
 
 }

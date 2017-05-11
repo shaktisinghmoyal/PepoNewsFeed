@@ -2,9 +2,12 @@
     <string name="app_name">PePo News</string>
 
     <string name="try_again">Try Again</string>
+    <string name="custom_intent_news_update">com.pepo.news.NEWS_UPDATED</string>
 
     //Exception messages
     <string name="exception_message_generic">There was an application error</string>
     <string name="exception_message_no_connection">There is no internet connection</string>
-    <string name="exception_message_books_not_found">Cannot retrieve user data. Check your internet connection</string>
+    <string name="exception_message_news_not_found">Cannot retrieve  data. Check your internet
+        connection</string>
+    <string name="news_feeds">news feeds</string>
 </resources>

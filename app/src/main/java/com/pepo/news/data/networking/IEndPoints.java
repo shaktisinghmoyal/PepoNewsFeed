@@ -9,7 +9,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public interface IRestApi extends BaseURL {
+public interface IEndPoints extends BaseURL {
 
     /**
      * Retrieves an {@link Observable} which will emit a List of {@link NewsFeedEntity}.

@@ -6,8 +6,7 @@ import android.content.Context;
 import com.pepo.news.domain.executor.PostExecutionThread;
 import com.pepo.news.domain.executor.ThreadExecutor;
 import com.pepo.news.domain.repository.INewsFeedRepository;
-import com.pepo.news.domain.repository.INewsFeedRepository;
-import com.pepo.news.presentation.appviewpresenter.base.view.activity.BaseActivity;
+import com.pepo.news.presentation.mvp.base.view.activity.BaseActivity;
 import com.pepo.news.presentation.di.modules.ApplicationModule;
 
 import javax.inject.Singleton;

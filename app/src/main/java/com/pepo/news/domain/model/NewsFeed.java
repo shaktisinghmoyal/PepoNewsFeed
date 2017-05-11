@@ -5,23 +5,38 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pepo.news.data.entity.NewsFeedEntity;
 
 /**
  * Created by shakti on 5/6/2017.
  */
 
+/**
+ * this is a simple POJO class represents the domain layer
+ * similar POJO class has also been defined in data  and presentation layer as well.
+ * Although in this application there is no difference among NewsFeedEntity from data layer,
+ * NewsFeed from
+ * domain layer NewsFeedModel from presentation layer. But in ideal case we usually have these
+ * three class with slight difference in their stucture as per their uses in their respective layer
+ */
+
+
 public class NewsFeed implements Parcelable {
+
     @SerializedName("TITLE")
     @Expose
     private String title;
+
     @SerializedName("LINK")
     @Expose
     private String link;
+
     @SerializedName("IMAGE_LINK")
     @Expose
     private String imageLink;
 
+    @SerializedName("READ")
+    @Expose
+    private boolean isRead;
 
     /**
      * No args constructor for use in serialization
@@ -33,12 +48,14 @@ public class NewsFeed implements Parcelable {
      * @param title
      * @param link
      * @param imageLink
+     * @param isRead
      */
-    public NewsFeed(String title, String link, String imageLink) {
+    public NewsFeed(String title, String link, String imageLink, boolean isRead) {
         super();
         this.title = title;
         this.link = link;
         this.imageLink = imageLink;
+        this.isRead = isRead;
     }
 
     public NewsFeed(Parcel in) {
@@ -46,6 +63,8 @@ public class NewsFeed implements Parcelable {
         this.title = in.readString();
         this.link = in.readString();
         this.imageLink = in.readString();
+        this.isRead = in.readByte() != 0;
+
     }
 
     public String getTitle() {
@@ -72,40 +91,45 @@ public class NewsFeed implements Parcelable {
         this.imageLink = imageLink;
     }
 
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class NewsFeedEntity {\n");
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NewsFeed)) return false;
 
-        sb.append("  title: ").append(title).append("\n");
-        sb.append("  link: ").append(link).append("\n");
-        sb.append("  imageLink: ").append(imageLink).append("\n");
-        sb.append("}\n");
-        return sb.toString();
+        NewsFeed newsFeed = (NewsFeed) o;
+
+        if (!getTitle().equals(newsFeed.getTitle())) return false;
+        if (!getLink().equals(newsFeed.getLink())) return false;
+        if (!getImageLink().equals(newsFeed.getImageLink())) return false;
+        return getIsRead().equals(newsFeed.getIsRead());
+
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + (title == null ? 0 : title.hashCode());
-        result = 31 * result + (link == null ? 0 : link.hashCode());
-        result = 31 * result + (imageLink == null ? 0 : imageLink.hashCode());
+        int result = getTitle().hashCode();
+        result = 31 * result + getLink().hashCode();
+        result = 31 * result + getImageLink().hashCode();
+        result = 31 * result + getIsRead().hashCode();
         return result;
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof NewsFeed) == false) {
-            return false;
-        }
-        NewsFeed rhs = ((NewsFeed) other);
-        return (title == null ? rhs.title == null : title.equals(rhs.title)) &&
-                (link == null ? rhs.link == null : link.equals(rhs.link)) &&
-                (imageLink == null ? rhs.imageLink == null : imageLink.equals(rhs.imageLink));
+    public String toString() {
+        return "NewsFeed{" +
+                "title='" + title + '\'' +
+                ", link='" + link + '\'' +
+                ", imageLink='" + imageLink + '\'' +
+                ", read=" + isRead +
+                '}';
     }
 
     public static final Parcelable.Creator<NewsFeed> CREATOR = new Parcelable.Creator<NewsFeed>() {
@@ -129,5 +153,6 @@ public class NewsFeed implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(link);
         parcel.writeString(imageLink);
+        parcel.writeByte((byte) (isRead ? 1 : 0));
     }
 }
