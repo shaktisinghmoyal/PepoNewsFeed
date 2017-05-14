@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.pepo.news.R;
@@ -22,7 +20,7 @@ import com.pepo.news.presentation.di.HasComponent;
 import com.pepo.news.presentation.di.components.DaggerNewsFeedComponent;
 import com.pepo.news.presentation.di.components.NewsFeedComponent;
 import com.pepo.news.presentation.mvp.base.view.activity.BaseActivity;
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 import com.pepo.news.presentation.mvp.home.presenter.NewsFeedPresenter;
 import com.pepo.news.presentation.mvp.home.view.NewsFeedView;
 import com.pepo.news.presentation.mvp.home.view.adapter.NewsFeedAdapter;

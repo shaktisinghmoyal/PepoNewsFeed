@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 import com.pepo.news.presentation.mvp.home.view.viwholders.NewsFeedViewHolder;
 
 import java.util.ArrayList;

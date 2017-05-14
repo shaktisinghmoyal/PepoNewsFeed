@@ -3,7 +3,7 @@ package com.pepo.news.presentation.mapper;
 
 
 import com.pepo.news.domain.model.NewsFeed;
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 import com.pepo.news.presentation.di.PerActivity;
 
 import java.util.ArrayList;
