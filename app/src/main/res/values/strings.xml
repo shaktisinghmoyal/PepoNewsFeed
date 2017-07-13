@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PePo News</string>
+    <string name="app_name">NewsFeed</string>
 
     <string name="try_again">Try Again</string>
     <string name="custom_intent_news_update">com.pepo.news.NEWS_UPDATED</string>
