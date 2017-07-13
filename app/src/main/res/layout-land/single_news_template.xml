@@ -2,7 +2,7 @@
 
     <data>
 
-        <import type="com.pepo.news.presentation.mvp.home.model.NewsFeedModel"/>
+        <import type="com.pepo.news.presentation.mvp.home.models.NewsFeedModel"/>
 
         <variable
             name="newsFeedModel"

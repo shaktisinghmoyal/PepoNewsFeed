@@ -12,7 +12,7 @@ import com.pepo.news.domain.interactor.DefaultSubscriber;
 import com.pepo.news.domain.model.NewsFeed;
 import com.pepo.news.presentation.exception.ErrorMessageFactory;
 import com.pepo.news.presentation.mvp.base.presenter.Presenter;
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 import com.pepo.news.presentation.mvp.home.view.NewsFeedView;
 import com.pepo.news.presentation.mapper.DataMapper;
 import com.pepo.news.presentation.di.PerActivity;

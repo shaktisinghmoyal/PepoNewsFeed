@@ -3,7 +3,7 @@ package com.pepo.news.presentation.mvp.home.view;
 
 import android.content.Context;
 
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 
 import java.util.List;
 

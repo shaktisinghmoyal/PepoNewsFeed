@@ -1,4 +1,4 @@
-package com.pepo.news.presentation.mvp.home.model;
+package com.pepo.news.presentation.mvp.home.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

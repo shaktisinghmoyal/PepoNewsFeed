@@ -3,7 +3,7 @@ package com.pepo.news.presentation.mvp.home.presenter;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 
 /**
  * Created by shakti on 5/6/2017.

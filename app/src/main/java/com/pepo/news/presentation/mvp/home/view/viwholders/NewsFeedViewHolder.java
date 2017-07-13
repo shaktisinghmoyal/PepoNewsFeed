@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.pepo.news.R;
 import com.pepo.news.databinding.SingleNewsTemplateBinding;
-import com.pepo.news.presentation.mvp.home.model.NewsFeedModel;
+import com.pepo.news.presentation.mvp.home.models.NewsFeedModel;
 import com.squareup.picasso.Picasso;
 
 
